@@ -25,13 +25,13 @@ class Petani{
     String updatedAt;
     
     factory Petani.fromJson(Map<String, dynamic> json) => Petani(
-        idPenjual: json["id_penjual"],
-        nama: json["nama"].toString(),
-        nik: json["nik"].toString(),
+        idPenjual: json["id_penjual"] as int,
+        nama: (json["nama"]==null || json["nama"]=='')?'':json["nama"].toString(),
+        nik: (json["nik"]==null || json["nik"]=='')?'':json["nik"].toString(),
         alamat: json["alamat"].toString(),
         telp: json["telp"].toString(),
         foto: json["foto"].toString(),
-        idKelompokTani: json["id_kelompok_tani"],
+        idKelompokTani: json["id_kelompok_tani"] as int,
         status: json["status"].toString(),
         namaKelompok: json["nama_kelompok"].toString(),
         createdAt: json["created_at"].toString(),

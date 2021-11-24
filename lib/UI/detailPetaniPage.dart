@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tanijaya/Models/petani.dart';
+import 'package:tanijaya/Services/apiStatic.dart';
 
 class DetailPetaniPage extends StatefulWidget {
   DetailPetaniPage({required this.petani});
@@ -20,7 +21,7 @@ class _DetailPetaniPageState extends State<DetailPetaniPage> {
         width: double.infinity,
         child: ListView(
           children: [
-            Image.network(widget.petani.foto),
+            Image.network(ApiStatic.host+'/'+widget.petani.foto),
             Container(
               padding: EdgeInsets.all(5),
               decoration: new BoxDecoration(

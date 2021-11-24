@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tanijaya/UI/petaniPage.dart';
+import 'package:tanijaya/UI/widget/buttomBar.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,29 +16,7 @@ class _HomePageState extends State<HomePage> {
         body: Center(
           child: Text("Home Page"),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: 0,
-          onTap: (i){
-            switch (i) {
-              case 0:
-                  Navigator.of(context).pushReplacement(new MaterialPageRoute(
-                    builder: (BuildContext context)=>HomePage()
-                  ));
-                break;
-              case 1:
-                  Navigator.of(context).pushReplacement(new MaterialPageRoute(
-                    builder: (BuildContext context)=>PetaniPage()
-                  ));
-                break;
-              default:
-            }
-          },
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
-            BottomNavigationBarItem(icon: Icon(Icons.supervised_user_circle), title: Text("Petani")),
-          ],
-        ),
+        bottomNavigationBar: buildBottomBar(0, context),
     );
   }
 }
