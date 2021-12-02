@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tanijaya/UI/homePage.dart';
+import 'package:tanijaya/UI/LoginPage.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: LoginScreen(),
     );
   }
 }

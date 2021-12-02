@@ -2,13 +2,21 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tanijaya/Models/errMsg.dart';
 import 'package:tanijaya/Models/kelompok.dart';
 import 'package:tanijaya/Models/petani.dart';
 
 class ApiStatic{
-  static final host='http://192.168.43.189/webtani/public';
-  static final _token="8|x6bKsHp9STb0uLJsM11GkWhZEYRWPbv0IqlXvFi7";
+  //static final host='http://192.168.43.189/webtani/public';
+  static final host='http://10.10.58.123/webtani/public';
+  static var _token="8|x6bKsHp9STb0uLJsM11GkWhZEYRWPbv0IqlXvFi7";
+  Future<SharedPreferences> preferences = SharedPreferences.getInstance();
+  static Future<void> getPref() async {
+    Future<SharedPreferences> preferences = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await preferences;    
+    _token = prefs.getString('token') ?? "";
+  }
   static getHost(){
     return host;
   }
@@ -26,6 +34,7 @@ class ApiStatic{
   static Future<List<Petani>> getPetani() async{
     //String response='{"current_page":1,"data":[{"id_penjual":1,"nama":"Sugi Tumang","nik":"39949","alamat":"Srikandi","telp":"0882788","foto":"petanis\/farmer_10763.png","id_kelompok_tani":1,"status":"Y","created_at":null,"updated_at":null,"nama_kelompok":"Suda Merta"},{"id_penjual":2,"nama":"Jaya Suda","nik":"38839","alamat":"Bekisar","telp":"099383","foto":"petanis\/images.jpg","id_kelompok_tani":1,"status":"Y","created_at":null,"updated_at":null,"nama_kelompok":"Suda Merta"}],"first_page_url":"http:\/\/192.168.43.189\/belajarapi\/public\/api\/petani?page=1","from":1,"last_page":1,"last_page_url":"http:\/\/192.168.43.189\/belajarapi\/public\/api\/petani?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/192.168.43.189\/belajarapi\/public\/api\/petani?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"http:\/\/192.168.43.189\/belajarapi\/public\/api\/petani","per_page":10,"prev_page_url":null,"to":2,"total":2}';
     try {
+      getPref();
       final response= await http.get(Uri.parse("$host/api/petani/"),
       headers: {
         'Authorization':'Bearer '+_token,
@@ -46,6 +55,7 @@ class ApiStatic{
   }
   static Future<List<Petani>> getPetaniFilter(int pageKey, String _s,String _selectedChoice) async{
     try {
+      getPref();
       final response= await http.get(Uri.parse("$host/api/petani?page="+pageKey.toString()+"&s="+_s+"&publish="+_selectedChoice),
       headers: {
         'Authorization':'Bearer '+_token,
@@ -132,4 +142,26 @@ class ApiStatic{
       return responseRequest;
     }
   }
+  static Future<ErrorMSG> sigIn(_post) async {
+      try {  
+        final response = await http.post(Uri.parse('$host/api/login'),body:_post); 
+          if (response.statusCode == 200) {
+          var res=jsonDecode(response.body);
+          //print(res);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          // var idppl=res['data']['id_ppl']==null?'':res['data']['id_ppl'] ;
+          // var idp=res['data']['id_penjual']==null?'':res['data']['id_penjual'];
+            prefs.setString('token', res['token']);
+            prefs.setString('name', res['user']['name']);
+            prefs.setString('email', res['user']['email']);
+            prefs.setInt('level', 1);
+            return ErrorMSG.fromJson(res);
+          } else {
+            return ErrorMSG.fromJson(jsonDecode(response.body));
+          }
+        } catch (e) {
+          ErrorMSG responseRequest = ErrorMSG(success: false,message: 'error caught: $e');
+          return responseRequest;
+        }
+    }
 }
